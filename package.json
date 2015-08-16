@@ -1,0 +1,32 @@
+{
+  "name": "myminute",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/unitimes/myminute.git"
+  },
+  "author": "cob",
+  "license": "UNLICENSED",
+  "private": true,
+  "bugs": {
+    "url": "https://github.com/unitimes/myminute/issues"
+  },
+  "homepage": "https://github.com/unitimes/myminute#readme",
+  "dependencies": {
+    "cheerio": "^0.19.0",
+    "express": "^4.13.3",
+    "randomstring": "^1.0.7",
+    "winston": "^1.0.1"
+  },
+  "devDependencies": {
+    "chai": "^3.2.0",
+    "chai-as-promised": "^5.1.0",
+    "karma": "^0.13.8",
+    "mocha": "^1.21.5"
+  }
+}
