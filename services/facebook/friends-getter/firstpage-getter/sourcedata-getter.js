@@ -1,5 +1,6 @@
 var https = require('https'),
-	querystring = require('querystring');
+	winston = require('winston'),
+	facebookError = require('../../enum').error;
 
 var getSourceData = function(oUserCookie, sUserUrl) {
 	return new Promise(
@@ -27,26 +28,39 @@ var setHttpsOptions = function(oUserCookie, sUserUrl) {
 };
 
 var makeRequest = function(resolve, reject, options) {
+	var starttimeOfReq, starttimeOfGetData;
+	starttimeOfReq = process.hrtime();
+	var checkAndResolve = function(spotData, res) {
+		if (spotData.match(/enableContentLoader(?:(?!app_collection)[\w\W])*app_collection_((?:(?!")[\w\W])*)/)) {
+			winston.debug('time to get firstpage-sourcedata body data', process.hrtime(starttimeOfGetData));
+			resolve(spotData);
+			res.emit('end');
+			return;
+		}
+	};
 	return https.request(options, function(res) {
 		var data = '';
+		var fFirst = true;
+
+		res.setEncoding('utf8');
 		res.on('data', function(chunk) {
+			if (fFirst) {
+				fFirst = false;
+				starttimeOfGetData = process.hrtime();
+			}
 			data += chunk;
+			checkAndResolve(data, res);
 		});
 		res.on('end', function() {
-			var err;
 			if (!data) {
-				err = new Error('empty data');
-				err.name = 'fb003';
-				reject(err);
+				reject(facebookError.FB003);
 				return;
 			}
 			if (!data.match(/uiList _262m/)) {
-				err = new Error('no friends source data');
-				err.name = 'fb004';
-				reject(err);
+				reject(facebookError.FB004);
 				return;
 			}
-			resolve(data);
+			winston.debug('time to get firstpage-sourcedata', process.hrtime(starttimeOfReq));
 		});
 	});
 };

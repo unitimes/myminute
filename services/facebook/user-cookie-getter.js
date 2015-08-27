@@ -1,6 +1,8 @@
 var https = require('https'),
+	winston = require('winston'),
 	querystring = require('querystring'),
-	randomstring = require('randomstring');
+	randomstring = require('randomstring'),
+	facebookError = require('./enum').error;
 
 var getUserCookie = function(obj) {
 	return new Promise(
@@ -36,14 +38,15 @@ var setHttpsOptions = function(postData, datr) {
 	};
 };
 var makeRequest = function(resolve, reject, datr, options) {
+	var startTime;
+	startTime = process.hrtime();
 	return https.request(options, function(res) {
 		var arrCookie = res.headers['set-cookie'];
 		if (!arrCookie) {
-			var err = new Error('login failed');
-			err.name = 'fb001';
-			reject(err);
+			reject(facebookError.FB001);
 			return;
 		}
+		winston.debug('get login cookie', process.hrtime(startTime));
 		resolve(getCuserAndXsFromCookie(arrCookie, datr));
 	});
 };

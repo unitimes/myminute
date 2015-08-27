@@ -1,23 +1,22 @@
 var https = require('https'),
 	winston = require('winston'),
-	facebookError = require('./enum').error;
+	facebookEnum = require('../../enum');
 
-var getUserUrl = function(oUserCookie) {
+var getSourceDataAtYearAndMon = function(oUserCookie, sId, date) {
 	return new Promise(
 		function(resolve, reject) {
 			var options, req;
-			options = setHttpsOptions(oUserCookie);
-			req = makeRequest(resolve, reject, options);
+			options = setHttpsOptions(oUserCookie, sId, date);
+			req = makeRequest(resolve, reject, optons);
 			req.end();
-		}
+		};
 	);
 };
 
-var setHttpsOptions = function(oUserCookie) {
+var setHttpsOptions = function(oUserCookie, sId, date) {
 	return {
 		host: 'www.facebook.com',
-		port: 443,
-		path: '/' + oUserCookie.cuser,
+		path: '/' + sId + '/' + (date.getMonth() + 1) + '/' + date.getDate(),
 		method: 'GET',
 		headers: {
 			'Cache-Control': 'no-cache',
@@ -28,18 +27,11 @@ var setHttpsOptions = function(oUserCookie) {
 };
 
 var makeRequest = function(resolve, reject, options) {
-	var startTime;
-	startTime = process.hrtime();
+	var startTime = process.hrtime();
 	return https.request(options, function(res) {
-		var fullUrl = res.headers.location;
-		var userUrl = fullUrl.match(/www.facebook.com\/([\w\W]*)/)[1];
-		if (!userUrl) {
-			reject(facebookError.FB002);
-			return;
-		}
-		winston.debug('time to get user url source data', process.hrtime(startTime));
-		resolve(userUrl);
+		var data = '';
+		res.on('data', function(chunk) {
+
+		});
 	});
 };
-
-exports.getUserUrl = getUserUrl;
