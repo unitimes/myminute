@@ -1,5 +1,5 @@
-var listMaker = require('./list-maker'),
+var	extractor = require('./extractor'),
 	sourcedataGetter = require('./sourcedata-getter');
 
-exports.listMaker = listMaker;
-exports.sourcedataGetter = sourcedataGetter;
+exports.getSourceData = sourcedataGetter.getSourceData;
+exports.extractFromSourceData = extractor.getListFromSourceData;

@@ -35,23 +35,23 @@ var makeQuery = function(oInfo) {
 
 var makeRequest = function(resolve, reject, options) {
 	var startTime = process.hrtime();
-	var parseResponseData = function(data) {
-			data = data.match(/payload"\s*:\s*((?:(?!ul>)[\w\W])*ul>)/)[1];
-			data = JSON.parse(data + '"');
-			winston.debug(data);
-			return data;
+	var checkAndResolve = function(spotData, res) {
+		if (spotData.match(/FriendListFlyoutController/)) {
+			resolve(spotData);
+			res.emit('end');
+			return;
+		}
 	};
+
 	return https.request(options, function(res) {
 		var data = '';
 		res.setEncoding('utf8');
 		res.on('data', function(chunk) {
 			data += chunk;
+			checkAndResolve(data, res);
 		});
 
 		res.on('end', function() {
-			var err;
-			data = parseResponseData(data);
-
 			if (!data) {
 				reject(facebookEnum.error.FB003);
 				return;
@@ -61,7 +61,6 @@ var makeRequest = function(resolve, reject, options) {
 				return;
 			}
 			winston.debug(process.hrtime(startTime));
-			resolve(data);
 		});
 	});
 };

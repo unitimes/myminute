@@ -22,6 +22,7 @@ var makeList = function($, oUserCookie) {
 
 		Promise.all(promises).then(function() {
 			winston.debug('make list completed');
+			winston.debug('number of friends in single page is ' + aOFriends.length);
 			resolve(aOFriends);
 		}).catch(function(err) {
 			reject(err);
@@ -44,13 +45,18 @@ var findAndPush = function($, oUserCookie, jqList, aOFriends) {
 	winston.debug('before return promise');
 
 	return new Promise(function(resolve, reject) {
+
 		winston.debug('from list-push, naem:  %s, urlPath: %s', oFriend.name, oFriend.urlPath);
+
 		brithDateGetter.getBirthdate(oUserCookie, oFriend.urlPath).then(function(birthDate) {
 			oFriend.birthDate = birthDate;
+
 			winston.debug('name: %s, id: %s, url: %s, pic: %s, birth: ' + oFriend.birthDate, oFriend.name, oFriend.profileid, oFriend.urlPath, oFriend.picture);
+
 			aOFriends.push(oFriend);
 			resolve();
 		}).catch(function(err) {
+
 			winston.debug(err);
 			resolve();
 		});

@@ -29,10 +29,19 @@ var setHttpsOptions = function(oUserCookie, sFriendUrl) {
 
 var makeRequest = function(resolve, reject, options) {
 	var startTime = process.hrtime();
+	var checkAndResolve = function(spotData, res) {
+		if (spotData.match(/_54n-\s*_2pi3/)) {
+			winston.debug('end of birthDate source data');
+			resolve(spotData);
+			res.emit('end');
+			return;
+		}
+	};
 	return https.request(options, function(res) {
 		var data = '';
 		res.on('data', function(chunk) {
 			data += chunk;
+			checkAndResolve(data, res);
 		});
 		res.on('end', function() {
 			if (!data) {
@@ -41,7 +50,6 @@ var makeRequest = function(resolve, reject, options) {
 				return;
 			}
 			winston.debug('time to get birthdate sourcedata', process.hrtime(startTime));
-			resolve(data);
 		});
 	}); 
 };

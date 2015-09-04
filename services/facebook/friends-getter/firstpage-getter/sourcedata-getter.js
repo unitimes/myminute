@@ -31,7 +31,7 @@ var makeRequest = function(resolve, reject, options) {
 	var starttimeOfReq, starttimeOfGetData;
 	starttimeOfReq = process.hrtime();
 	var checkAndResolve = function(spotData, res) {
-		if (spotData.match(/enableContentLoader(?:(?!app_collection)[\w\W])*app_collection_((?:(?!")[\w\W])*)/)) {
+		if (spotData.match(/FriendListFlyoutController/)) {
 			winston.debug('time to get firstpage-sourcedata body data', process.hrtime(starttimeOfGetData));
 			resolve(spotData);
 			res.emit('end');
@@ -40,10 +40,12 @@ var makeRequest = function(resolve, reject, options) {
 	};
 	return https.request(options, function(res) {
 		var data = '';
+		//for performance test
 		var fFirst = true;
 
 		res.setEncoding('utf8');
 		res.on('data', function(chunk) {
+			//this if statement is for performance test
 			if (fFirst) {
 				fFirst = false;
 				starttimeOfGetData = process.hrtime();

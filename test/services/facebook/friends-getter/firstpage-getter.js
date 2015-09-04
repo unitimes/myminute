@@ -52,7 +52,7 @@ describe('fbFirstPageFriendsGetter', function() {
 			});
 		});
 
-		it.only('should return friend list', function() {
+		it('should return friend list', function() {
 			winston.debug(aFriends[aFriends.length - 1].name);
 			aFriends.should.be.a('array');
 		});

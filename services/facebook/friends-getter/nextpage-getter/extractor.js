@@ -3,9 +3,10 @@ var cheerio = require('cheerio'),
 	listMaker = require('../commons/list-maker');
 
 var getListFromSourceData = function(sSourceData, oUserCookie) {
-	var $;
+	var $, sParsedSourceData;
 
-	$ = makeJQueryObject(sSourceData);
+	sParsedSourceData = parseSourceData(sSourceData);
+	$ = makeJQueryObject(sParsedSourceData);
 
 	return listMaker.makeList($, oUserCookie);
 };
@@ -15,6 +16,12 @@ var makeJQueryObject = function(sSourceData) {
 
 	sTarget = sSourceData.match(/<ul((?:(?!\/ul)[\w\W])*)\/ul>/)[0];
 	return cheerio.load(sTarget);
+};
+
+var parseSourceData = function(data) {
+	data = data.match(/payload"\s*:\s*((?:(?!ul>)[\w\W])*ul>)/)[1];
+	data = JSON.parse(data + '"');
+	return data;
 };
 
 exports.getListFromSourceData = getListFromSourceData;
